@@ -11,5 +11,24 @@ jobs:
     name: run commands and collect message
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
 
+      - name: ssh-agent
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: main
+  
+      - name: Checkout tools repo
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ secrets.REPO }}
+          path: RssGenerator
+
+      - name: Run commands
+        run: |
+          apt install tree -y
+          tree
