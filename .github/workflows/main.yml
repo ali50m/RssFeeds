@@ -17,10 +17,18 @@ jobs:
         with:
             ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: install tree
+        run: |
+          apt install tree -y
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
           path: main
+
+      - name: Run tree
+        run: |
+          tree
   
       - name: Checkout tools repo
         uses: actions/checkout@v3
@@ -28,7 +36,6 @@ jobs:
           repository: ${{ secrets.REPO }}
           path: RssGenerator
 
-      - name: Run commands
+      - name: Run tree
         run: |
-          apt install tree -y
           tree
