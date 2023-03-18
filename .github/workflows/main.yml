@@ -37,8 +37,8 @@ jobs:
       - name: Checkout tools repo
         uses: actions/checkout@v3
         with:
-          repository: ${{github.repository_owner}}/{{secrets.REPO}}
-          path: RssGenerator
+          repository: ${{ github.repository_owner }}/${{ secrets.REPO }}
+          path: ${{ secrets.REPO }}
 
       - name: Run tree
         run: |
