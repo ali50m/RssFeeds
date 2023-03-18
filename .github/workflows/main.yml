@@ -19,7 +19,7 @@ jobs:
 
       - name: install tree
         run: |
-          apt install tree -y
+          sudo apt install tree -y
 
       - name: Checkout
         uses: actions/checkout@v3
