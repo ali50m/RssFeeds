@@ -53,9 +53,12 @@ jobs:
           python3 -m pip install -r requirements.txt
           # build
           python3 cli.py
-
-      - name: Run tree
-        run: |
-          cd ${{ secrets.REPO }}
-          tree
           cat artifact/feed.xml
+
+      - name: commit and push
+        run: |
+          cp ${{ secrets.REPO }}/artifact/feed.xml ${{ github.repository_name }}/pywlwz/feed.xml
+          cd ${{ github.repository_name }}
+          git add pywlwz/feed.xml
+          git commit -m "update feed.xml at $(date)"
+          git push
