@@ -63,6 +63,8 @@ jobs:
         run: |
           cp ./${{ secrets.REPO }}/artifact/feed.xml ./${{ env.REPO }}/pywlwz/feed.xml
           cd ${{ env.REPO }}
+          git config --global user.name ${{ secrets.GIT_USER_NAME }}
+          git config --global user.email ${{ secrets.GIT_USER_NAME }}@github-action
           git add pywlwz/feed.xml
           git commit -m "update feed.xml at $(date)"
           git push
