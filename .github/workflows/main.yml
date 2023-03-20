@@ -17,6 +17,9 @@ jobs:
     name: run commands and collect message
     runs-on: ubuntu-latest
     steps:
+      - id: record-begin-time
+        uses: ali50m/actions/record-begin-time@main
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -44,8 +47,8 @@ jobs:
         uses: ali50m/actions/new-weixin-api-message@main
         with:
           weixin: ${{secrets.WEIXIN}}
-          result: "🍄@${{ env.FEED }}"
-          now: $(date)
+          result: "🍄"
+          now: ${{steps.record-begin-time.outputs.now}}
 
       - name: commit and push
         run: |
