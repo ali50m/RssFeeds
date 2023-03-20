@@ -16,11 +16,6 @@ jobs:
         run: |
           sudo apt install tree -y
 
-      # - name: ssh-agent
-      #   uses: webfactory/ssh-agent@v0.7.0
-      #   with:
-      #       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
       - name: Run tree
         run: |
           tree
@@ -28,7 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          path: main
+          path: ${{ github.repository_name }}
 
       - name: Run tree
         run: |
@@ -39,10 +34,8 @@ jobs:
         with:
           host: github.com
           private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      # - name: Clone repository
-      #   run: git clone git@github.com:username/repository.git
 
-      - name: git clone
+      - name: clone repository
         run: |
           git clone git@github.com:${{ github.repository_owner }}/${{ secrets.REPO }}.git
 
