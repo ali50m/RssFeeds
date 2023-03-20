@@ -22,11 +22,13 @@ jobs:
         with:
           path: ${{ env.REPO }}
 
-      - name: Setup SSH & clone repository
+      - name: Setup SSH
         uses: MrSquaare/ssh-setup-action@v2
         with:
           host: github.com
           private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+   
+      - name: clone repository
         run: |
           git clone git@github.com:${{ env.OWNER }}/${{ env.RSS_REPO }}.git
 
@@ -34,8 +36,6 @@ jobs:
         id: build-feed
         run: |
           cd ${{ env.RSS_REPOO }}
-          python3 -m venv venv
-          source venv/bin/activate
           python3 -m pip install -r requirements.txt
           python3 cli.py
           cat artifact/feed.xml
