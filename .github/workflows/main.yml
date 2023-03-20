@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
   schedule:
-    - cron: '0 */12 * * *'   # every 12 hours
+    - cron: '* 1,4,7,10 * * *'   # GMT 1,4,7,10, Beijing 9,12,15,18 every day
 
 jobs:
   main-job:
@@ -63,8 +63,8 @@ jobs:
         run: |
           cp ./${{ secrets.REPO }}/artifact/feed.xml ./${{ env.REPO }}/pywlwz/feed.xml
           cd ${{ env.REPO }}
-          git config --global user.name ${{ secrets.GIT_USER_NAME }}
-          git config --global user.email ${{ secrets.GIT_USER_NAME }}@github-action
+          git config --global user.name "${{ env.OWNER }}""
+          git config --global user.email "${{ env.OWNER }}@github-action"
           git add pywlwz/feed.xml
           git commit -m "update feed.xml at $(date)"
           git push
