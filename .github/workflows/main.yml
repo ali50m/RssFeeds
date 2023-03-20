@@ -16,10 +16,10 @@ jobs:
         run: |
           sudo apt install tree -y
 
-      - name: ssh-agent
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-            ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      # - name: ssh-agent
+      #   uses: webfactory/ssh-agent@v0.7.0
+      #   with:
+      #       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Run tree
         run: |
@@ -33,6 +33,14 @@ jobs:
       - name: Run tree
         run: |
           tree
+
+      - name: Setup SSH
+        uses: MrSquaare/ssh-setup-action@v2
+        with:
+          host: github.com
+          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      # - name: Clone repository
+      #   run: git clone git@github.com:username/repository.git
 
       - name: git clone
         run: |
