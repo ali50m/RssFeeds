@@ -60,11 +60,14 @@ jobs:
           cat artifact/feed.xml
 
       - name: commit and push
+        uses: actions/setup-git@v2
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           cp ./${{ secrets.REPO }}/artifact/feed.xml ./${{ env.REPO }}/pywlwz/feed.xml
-          cd ${{ env.REPO }}
+          cd ./${{ env.REPO }}
           git config --global user.name "${{ env.OWNER }}"
           git config --global user.email "${{ env.OWNER }}@github-action"
           git add pywlwz/feed.xml
           git commit -m "update feed.xml at $(date)"
-          git push
+          git push origin main
