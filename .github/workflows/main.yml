@@ -1,4 +1,4 @@
-name: CI
+name: generate-pywlwz-feed
 
 on:
   workflow_dispatch:
@@ -39,6 +39,13 @@ jobs:
           python3 -m pip install -r requirements.txt
           python3 cli.py
           cat artifact/feed.xml
+
+      - name: report failure
+        uses: ali50m/actions/new-weixin-api-message@main
+        with:
+          weixin: ${{secrets.WEIXIN}}
+          result: "🍄@${{ env.FEED }}"
+          now: $(date)
 
       - name: commit and push
         run: |
