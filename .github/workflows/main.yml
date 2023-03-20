@@ -45,6 +45,8 @@ jobs:
 
       - name: report failure
         uses: ali50m/actions/new-weixin-api-message@main
+        if: ${{ success() }}
+        # if: ${{ failure() }}
         with:
           weixin: ${{secrets.WEIXIN}}
           result: "🍄"
