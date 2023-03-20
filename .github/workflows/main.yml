@@ -56,5 +56,6 @@ jobs:
 
       - name: Run tree
         run: |
+          cd ${{ secrets.REPO }}
           tree
           cat artifact/feed.xml
