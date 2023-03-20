@@ -3,8 +3,8 @@ name: generate-pywlwz-feed
 on:
   workflow_dispatch:
 
-  # schedule:
-  #   - cron: '* 1,4,7,10 * * *'   # GMT 1,4,7,10, Beijing 9,12,15,18 every day
+  schedule:
+    - cron: '* 1,4,7,10 * * *'   # GMT 1,4,7,10, Beijing 9,12,15,18 every day
 
 env:
   REPO: ${{ github.event.repository.name }}
@@ -20,12 +20,12 @@ jobs:
       - id: record-begin-time
         uses: ali50m/actions/record-begin-time@main
 
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v3
         with:
           path: ${{ env.REPO }}
 
-      - name: Setup SSH
+      - name: setup SSH
         uses: MrSquaare/ssh-setup-action@v2
         with:
           host: github.com
@@ -35,22 +35,12 @@ jobs:
         run: |
           git clone git@github.com:${{ env.OWNER }}/${{ env.RSS_REPO }}.git
 
-      - name: build-feed
-        id: build-feed
+      - name: build feed
         run: |
           cd ${{ env.RSS_REPO }}
           python3 -m pip install -r requirements.txt
           python3 cli.py
           cat artifact/feed.xml
-
-      - name: report failure
-        uses: ali50m/actions/new-weixin-api-message@main
-        if: ${{ success() }}
-        # if: ${{ failure() }}
-        with:
-          weixin: ${{secrets.WEIXIN}}
-          result: "🍄"
-          now: ${{steps.record-begin-time.outputs.now}}
 
       - name: commit and push
         run: |
@@ -61,3 +51,11 @@ jobs:
           git add ${{ env.FEED }}/feed.xml
           git commit -m "update feed.xml at $(date)"
           git push origin main
+
+      - name: report failure
+        uses: ali50m/actions/new-weixin-api-message@main
+        if: ${{ failure() }}
+        with:
+          weixin: ${{ secrets.WEIXIN }}
+          result: "🍄"
+          now: ${{ steps.record-begin-time.outputs.now }}
