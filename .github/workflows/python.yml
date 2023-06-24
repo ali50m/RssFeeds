@@ -1,14 +1,14 @@
-name: generate-pywlwz-feed
+name: generate-pywlwz-feed-py
 
 on:
   workflow_dispatch:
 
-  schedule:
-    # GMT 1,4,7,10, Beijing 9,12,15,18 every day
-    - cron: '0 1 * * *'   
-    - cron: '0 4 * * *'   
-    - cron: '0 7 * * *'   
-    - cron: '0 10 * * *'   
+  # schedule:
+  #   # GMT 1,4,7,10, Beijing 9,12,15,18 every day
+  #   - cron: '0 1 * * *'   
+  #   - cron: '0 4 * * *'   
+  #   - cron: '0 7 * * *'   
+  #   - cron: '0 10 * * *'   
 
 env:
   REPO: ${{ github.event.repository.name }}
