@@ -14,6 +14,8 @@ env:
   REPO: ${{github.event.repository.name}}
   RSS_REPO: ${{secrets.REPO_DOTNET}}
   OWNER: ${{github.repository_owner}}
+  SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY2}}
+  WEIXIN: ${{secrets.WEIXIN}}
   FEED: pywlwz
   REQUIRED_DOTNET_VERSION: 7.0
 
@@ -37,7 +39,7 @@ jobs:
         uses: MrSquaare/ssh-setup-action@v2
         with:
           host: github.com
-          private-key: ${{secrets.SSH_PRIVATE_KEY2}}
+          private-key: ${{env.SSH_PRIVATE_KEY}}
       
       - name: clone repository
         run: |
@@ -74,7 +76,7 @@ jobs:
         uses: ali50m/actions/new-weixin-api-message@main
         if: ${{failure()}}
         with:
-          weixin: ${{secrets.WEIXIN}}
+          weixin: ${{env.WEIXIN}}
           result: "🍄"
           now: ${{steps.record-begin-time.outputs.now}}
     
