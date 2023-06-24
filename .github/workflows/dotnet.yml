@@ -29,6 +29,8 @@ jobs:
 
       - name: checkout
         uses: actions/checkout@v3
+        with:
+          path: ${{ env.REPO }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
