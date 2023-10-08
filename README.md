@@ -5,3 +5,5 @@ https://adventures.michaelfbryan.com/posts/configuring-cargo-auth-in-github-acti
 # 需要增加action修改repo的权限
 
 在 settings->Actions->General->Workflow permissions 中修改为 **Read and write permissions**
+
+update 2023/10/08
