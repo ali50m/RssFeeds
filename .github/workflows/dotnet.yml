@@ -17,7 +17,7 @@ env:
   SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY2}}
   WEIXIN: ${{secrets.WEIXIN}}
   FEED: pywlwz
-  REQUIRED_DOTNET_VERSION: "7.0"
+  REQUIRED_DOTNET_VERSION: "8.0"
 
 jobs:
   main-job:
