@@ -51,7 +51,8 @@ jobs:
         working-directory: ./${{env.RSS_REPO}}
         continue-on-error: true
         run: |
-          dotnet test --filter "FullyQualifiedName=AllTests.WlwzRssServiceTest.ProduceFeedXml" --logger "console;verbosity=detailed"
+          # dotnet test --filter "FullyQualifiedName=AllTests.WlwzRssServiceTest.ProduceFeedXml" --logger "console;verbosity=detailed"
+          dotnet test --filter "FullyQualifiedName=AllTests.ZjzwRssTests.GenerateRss_ShouldWork" --logger "console;verbosity=detailed"
       
       - name: echo
         if: ${{steps.build-feed.outcome != 'success'}}
