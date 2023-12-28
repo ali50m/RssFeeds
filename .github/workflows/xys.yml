@@ -63,12 +63,12 @@ jobs:
       - name: commit and push
         if: ${{steps.build-feed.outcome == 'success'}}
         run: |
-          cp ./${{env.RSS_REPO}}/src/AllTests/bin/Debug/net${{env.REQUIRED_DOTNET_VERSION}}/xys.xml ./${{env.REPO}}/${{env.FEED}}/xys.xml
+          cp ./${{env.RSS_REPO}}/src/AllTests/bin/Debug/net${{env.REQUIRED_DOTNET_VERSION}}/newxys.xml ./${{env.REPO}}/${{env.FEED}}/newxys.xml
           cd ./${{env.REPO}}
           git config --global user.name ${{env.OWNER}}
           git config --global user.email ${{env.OWNER}}@github-action
-          git add ${{env.FEED}}/xys.xml
-          git commit -m "update xys.xml at $(date)"
+          git add ${{env.FEED}}/newxys.xml
+          git commit -m "update newxys.xml at $(date)"
           git push origin main
       
       - name: report failure
