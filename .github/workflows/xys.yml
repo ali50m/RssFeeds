@@ -13,8 +13,6 @@ env:
   RSS_REPO: ${{secrets.REPO}}
   SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
   WEIXIN: ${{secrets.WEIXIN}}
-  DBURL: ${{secrets.DBURL}}
-  WEBDB: ${{secrets.WEBDB}}
   FEED: xys
   REQUIRED_DOTNET_VERSION: "8.0"
 
@@ -23,8 +21,8 @@ jobs:
     name: run commands and collect message
     runs-on: ubuntu-latest
     env:
-      DBURL: ${{env.DBURL}}
-      WEBDB: ${{env.WEBDB}}
+      DBURL: ${{secrets.DBURL}}
+      WEBDB: ${{secrets.WEBDB}}
     steps:
       - id: record-begin-time
         uses: ali50m/actions/record-begin-time@main
