@@ -1,0 +1,80 @@
+name: generate-xys-feed-dotnet
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # GMT 14 Beijing 22 every day
+    - cron: '0 14 * * *'    
+
+env:
+  REPO: ${{github.event.repository.name}}
+  OWNER: ${{github.repository_owner}}
+  RSS_REPO: ${{secrets.REPO}}
+  SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+  WEIXIN: ${{secrets.WEIXIN}}
+  FEED: xys
+  REQUIRED_DOTNET_VERSION: "8.0"
+
+jobs:
+  main-job:
+    name: run commands and collect message
+    runs-on: ubuntu-latest
+    steps:
+      - id: record-begin-time
+        uses: ali50m/actions/record-begin-time@main
+
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          path: ${{ env.REPO }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{env.REQUIRED_DOTNET_VERSION}}
+  
+      - name: clone repo
+        run: |
+          git clone https://${{env.SSH_PRIVATE_KEY}}@github.com/${{github.repository_owner}}/${{env.RSS_REPO}}.git
+      
+      - id: build-feed
+        working-directory: ./${{env.RSS_REPO}}
+        continue-on-error: true
+        run: |
+          dotnet test --filter "FullyQualifiedName=AllTests.GithubActionTests.Build_Xys_Feed" --logger "console;verbosity=detailed"
+      
+      - name: echo
+        if: ${{steps.build-feed.outcome != 'success'}}
+        run: |
+          outcomes=$(cat <<-END
+          build-feed:           ${{steps.build-feed.outcome}}
+          END
+          )
+          echo "${outcomes}"
+          echo "${outcomes}" >> $GITHUB_STEP_SUMMARY
+      
+      - name: commit and push
+        if: ${{steps.build-feed.outcome == 'success'}}
+        run: |
+          # 检查是否有newxys.xml文件产生, 如果没有则不进行后续操作
+          if [ ! -f ./${{env.RSS_REPO}}/src/AllTests/bin/Debug/net${{env.REQUIRED_DOTNET_VERSION}}/newxys.xml ]; then
+            echo "newxys.xml has not been updated."
+            exit 0
+          fi
+          cp ./${{env.RSS_REPO}}/src/AllTests/bin/Debug/net${{env.REQUIRED_DOTNET_VERSION}}/newxys.xml ./${{env.REPO}}/${{env.FEED}}/newxys.xml
+          cd ./${{env.REPO}}
+          git config --global user.name ${{env.OWNER}}
+          git config --global user.email ${{env.OWNER}}@github-action
+          git add ${{env.FEED}}/newxys.xml
+          git commit -m "update newxys.xml at $(date)"
+          git push origin main
+      
+      - name: report failure
+        uses: ali50m/actions/new-weixin-api-message@main
+        if: ${{failure()}}
+        with:
+          weixin: ${{env.WEIXIN}}
+          result: "🍄"
+          now: ${{steps.record-begin-time.outputs.now}}
+    

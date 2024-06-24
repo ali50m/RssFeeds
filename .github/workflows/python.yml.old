@@ -1,0 +1,65 @@
+name: generate-pywlwz-feed-py
+
+on:
+  workflow_dispatch:
+
+  # schedule:
+  #   # GMT 1,4,7,10, Beijing 9,12,15,18 every day
+  #   - cron: '0 1 * * *'   
+  #   - cron: '0 4 * * *'   
+  #   - cron: '0 7 * * *'   
+  #   - cron: '0 10 * * *'   
+
+env:
+  REPO: ${{ github.event.repository.name }}
+  RSS_REPO: ${{ secrets.REPO }}
+  OWNER: ${{ github.repository_owner }}
+  FEED: pywlwz
+
+jobs:
+  main-job:
+    name: run commands and collect message
+    runs-on: ubuntu-latest
+    steps:
+      - id: record-begin-time
+        uses: ali50m/actions/record-begin-time@main
+
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.REPO }}
+
+      - name: setup SSH
+        uses: MrSquaare/ssh-setup-action@v2
+        with:
+          host: github.com
+          private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+   
+      - name: clone repository
+        run: |
+          git clone git@github.com:${{ env.OWNER }}/${{ env.RSS_REPO }}.git
+
+      - name: build feed
+        run: |
+          cd ${{ env.RSS_REPO }}
+          python3 -m pip install -r requirements.txt
+          python3 cli.py
+          cat artifact/feed.xml
+
+      - name: commit and push
+        run: |
+          cp ./${{ env.RSS_REPO }}/artifact/feed.xml ./${{ env.REPO }}/${{ env.FEED }}/feed.xml
+          cd ./${{ env.REPO }}
+          git config --global user.name ${{ env.OWNER }}
+          git config --global user.email ${{ env.OWNER }}@github-action
+          git add ${{ env.FEED }}/feed.xml
+          git commit -m "update feed.xml at $(date)"
+          git push origin main
+
+      - name: report failure
+        uses: ali50m/actions/new-weixin-api-message@main
+        if: ${{ failure() }}
+        with:
+          weixin: ${{ secrets.WEIXIN }}
+          result: "🍄"
+          now: ${{ steps.record-begin-time.outputs.now }}
