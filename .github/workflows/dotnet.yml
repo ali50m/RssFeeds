@@ -5,16 +5,16 @@ on:
 
   schedule:
     # GMT 1,4,7,10, Beijing 9,12,15,18 every day
-    # - cron: '0 1 * * *'   
-    # - cron: '0 4 * * *'   
-    # - cron: '0 7 * * *'   
-    # - cron: '0 10 * * *'   
+    - cron: '0 1 * * *'   
+    - cron: '0 4 * * *'   
+    - cron: '0 7 * * *'   
+    - cron: '0 10 * * *'   
 
 env:
   REPO: ${{github.event.repository.name}}
-  RSS_REPO: ${{secrets.REPO_DOTNET}}
   OWNER: ${{github.repository_owner}}
-  SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY2}}
+  RSS_REPO: ${{secrets.REPO}}
+  SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
   WEIXIN: ${{secrets.WEIXIN}}
   FEED: pywlwz
   REQUIRED_DOTNET_VERSION: "8.0"
@@ -23,36 +23,32 @@ jobs:
   main-job:
     name: run commands and collect message
     runs-on: ubuntu-latest
+    env:
+      DBURL: ${{secrets.DBURL}}
+      WEBDB: ${{secrets.WEBDB}}
     steps:
       - id: record-begin-time
         uses: ali50m/actions/record-begin-time@main
 
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: ${{ env.REPO }}
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{env.REQUIRED_DOTNET_VERSION}}
   
-      - name: setup SSH
-        uses: MrSquaare/ssh-setup-action@v2
-        with:
-          host: github.com
-          private-key: ${{env.SSH_PRIVATE_KEY}}
-      
-      - name: clone repository
+      - name: clone repo
         run: |
-          git clone git@github.com:${{env.OWNER}}/${{env.RSS_REPO}}.git
+          git clone https://${{env.SSH_PRIVATE_KEY}}@github.com/${{github.repository_owner}}/${{env.RSS_REPO}}.git
       
       - id: build-feed
         working-directory: ./${{env.RSS_REPO}}
         continue-on-error: true
         run: |
-          # dotnet test --filter "FullyQualifiedName=AllTests.WlwzRssServiceTest.ProduceFeedXml" --logger "console;verbosity=detailed"
-          dotnet test --filter "FullyQualifiedName=AllTests.ZjzwRssTests.GenerateRssNewFeed_ShouldWork" --logger "console;verbosity=detailed"
+          dotnet test --filter "FullyQualifiedName=AllTests.GithubActionTests.Build_Zjzw_Feed" --logger "console;verbosity=detailed"
       
       - name: echo
         if: ${{steps.build-feed.outcome != 'success'}}
@@ -67,6 +63,11 @@ jobs:
       - name: commit and push
         if: ${{steps.build-feed.outcome == 'success'}}
         run: |
+          # 检查是否有newxys.xml文件产生, 如果没有则不进行后续操作
+          if [ ! -f ./${{env.RSS_REPO}}/src/AllTests/bin/Debug/net${{env.REQUIRED_DOTNET_VERSION}}/newfeed.xml ]; then
+            echo "newfeed.xml has not been updated."
+            exit 0
+          fi
           cp ./${{env.RSS_REPO}}/src/AllTests/bin/Debug/net${{env.REQUIRED_DOTNET_VERSION}}/newfeed.xml ./${{env.REPO}}/${{env.FEED}}/newfeed.xml
           cd ./${{env.REPO}}
           git config --global user.name ${{env.OWNER}}
