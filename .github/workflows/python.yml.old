@@ -25,7 +25,7 @@ jobs:
         uses: ali50m/actions/record-begin-time@main
 
       - name: checkout
-        uses: actions/checkout@v3
+        uses: ali50m/actions/my-check-out@main
         with:
           path: ${{ env.REPO }}
 

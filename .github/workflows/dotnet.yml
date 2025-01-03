@@ -31,12 +31,12 @@ jobs:
         uses: ali50m/actions/record-begin-time@main
 
       - name: checkout
-        uses: actions/checkout@v4
+        uses: ali50m/actions/my-check-out@main
         with:
           path: ${{ env.REPO }}
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: ali50m/actions/my-setup-dotnet@main
         with:
           dotnet-version: ${{env.REQUIRED_DOTNET_VERSION}}
   
