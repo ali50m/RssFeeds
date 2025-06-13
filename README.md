@@ -1,6 +1,8 @@
 how to clone a private repo
 
-https://adventures.michaelfbryan.com/posts/configuring-cargo-auth-in-github-actions/
+https://stackoverflow.com/a/74890752/6231009
+
+~~https://adventures.michaelfbryan.com/posts/configuring-cargo-auth-in-github-actions/~~
 
 # 需要增加action修改repo的权限
 
